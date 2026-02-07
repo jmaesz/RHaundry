@@ -1,26 +1,38 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { WashingMachine, Shirt, Clock, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { formatDistanceToNow, addMinutes } from "date-fns";
+import { calculateBookingStatus, getMockBookingForMachine } from "@/lib/mock-data";
 import type { Machine, Booking } from "@shared/schema";
 
 interface MachineCardProps {
   machine: Machine;
   activeBooking?: Booking;
   onBook: (machine: Machine) => void;
+  onBookingClick?: (machine: Machine, booking: Booking) => void;
 }
 
-export function MachineCard({ machine, activeBooking, onBook }: MachineCardProps) {
-  const isAvailable = !activeBooking && machine.status === "available";
-  const Icon = machine.type === "washer" ? WashingMachine : Shirt; // Shirt as pseudo-dryer icon
+export function MachineCard({ machine, activeBooking, onBook, onBookingClick }: MachineCardProps) {
+  // If parent didn't pass an activeBooking prop (because of localStorage or timing),
+  // attempt to resolve a mock booking locally so VIEW DETAILS always works for in_use machines.
+  const fallbackBooking = getMockBookingForMachine(machine.id);
+  const resolvedBooking = activeBooking ?? fallbackBooking;
 
-  // Calculate time remaining if busy
-  let timeRemaining = "";
-  if (activeBooking) {
-    const endTime = addMinutes(new Date(activeBooking.startTime), activeBooking.durationMinutes);
-    // Simple mock calculation for display
-    timeRemaining = formatDistanceToNow(endTime, { addSuffix: true });
-  }
+  const isAvailable = !resolvedBooking && machine.status === "available";
+  const Icon = machine.type === "washer" ? WashingMachine : Shirt;
+
+  const [bookingStatus, setBookingStatus] = useState(resolvedBooking ? calculateBookingStatus(resolvedBooking) : null);
+
+  // Update booking status every second
+  useEffect(() => {
+    if (!resolvedBooking) return;
+
+    const interval = setInterval(() => {
+      setBookingStatus(calculateBookingStatus(resolvedBooking));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [resolvedBooking]);
 
   return (
     <motion.div
@@ -63,23 +75,41 @@ export function MachineCard({ machine, activeBooking, onBook }: MachineCardProps
           )}
         </div>
 
-        {!isAvailable && activeBooking && (
-          <div className="flex items-center text-xs text-muted-foreground bg-black/20 p-2 rounded">
-            <Clock className="w-3 h-3 mr-2" />
-            <span>Free {timeRemaining}</span>
+        {!isAvailable && resolvedBooking && bookingStatus && (
+          <div className="flex items-center text-xs font-mono p-2 rounded border transition-all"
+               style={{
+                 backgroundColor: bookingStatus.isLate ? "rgba(239, 68, 68, 0.1)" : "rgba(0, 100, 0, 0.1)",
+                 borderColor: bookingStatus.isLate ? "rgba(239, 68, 68, 0.3)" : "rgba(0, 100, 0, 0.3)",
+               }}>
+            <Clock className="w-3 h-3 mr-2 flex-shrink-0" />
+            <span className={bookingStatus.isLate ? "text-red-400" : "text-primary"}>
+              {String(bookingStatus.minutes).padStart(2, "0")}:{String(bookingStatus.seconds).padStart(2, "0")}
+            </span>
           </div>
         )}
 
-        <Button 
+        <Button
           className={`w-full font-bold tracking-wide transition-all ${
-            isAvailable 
-              ? "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20" 
-              : "bg-muted text-muted-foreground cursor-not-allowed hover:bg-muted"
+            isAvailable
+              ? "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
+              : "bg-muted text-muted-foreground hover:bg-muted/80 cursor-pointer"
           }`}
-          disabled={!isAvailable}
-          onClick={() => isAvailable && onBook(machine)}
+          disabled={false}
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log('Machine card clicked:', machine.machineNumber, 'Available:', isAvailable);
+
+            if (isAvailable) {
+              console.log('Calling onBook for machine:', machine);
+              onBook(machine);
+            } else if (onBookingClick) {
+              const bookingToUse = resolvedBooking ?? getMockBookingForMachine(machine.id);
+              console.log('Calling onBookingClick with booking:', bookingToUse);
+              if (bookingToUse) onBookingClick(machine, bookingToUse);
+            }
+          }}
         >
-          {isAvailable ? "INITIALIZE" : "UNAVAILABLE"}
+          {isAvailable ? "INITIALIZE" : "VIEW DETAILS"}
         </Button>
       </div>
     </motion.div>

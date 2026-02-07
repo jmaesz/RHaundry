@@ -1,6 +1,46 @@
+# Dependencies
 node_modules
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
 dist
+build
+.next
+out
+
+# Environment variables (sensitive)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE / Editor
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.vim
+
+# Build artifacts
 server/public
 vite.config.ts.*
+
+# Archives
 *.tar.gz
+*.zip
+
+# Local development
+.local

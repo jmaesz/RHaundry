@@ -12,8 +12,11 @@ import { MobileNav, DesktopSidebar } from "@/components/Navigation";
 // Pages
 import Home from "@/pages/Home";
 import Landing from "@/pages/Landing";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
 import Leaderboard from "@/pages/Leaderboard";
 import Alerts from "@/pages/Alerts";
+import Messages from "@/pages/Messages";
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/not-found";
 
@@ -48,10 +51,18 @@ function PrivateRoute({ component: Component }: { component: React.ComponentType
 function Router() {
   return (
     <Switch>
+      {/* Public Routes */}
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
+
+      {/* Private Routes */}
       <Route path="/" component={() => <PrivateRoute component={Home} />} />
       <Route path="/leaderboard" component={() => <PrivateRoute component={Leaderboard} />} />
       <Route path="/alerts" component={() => <PrivateRoute component={Alerts} />} />
+      <Route path="/messages" component={() => <PrivateRoute component={Messages} />} />
       <Route path="/profile" component={() => <PrivateRoute component={Profile} />} />
+
+      {/* 404 */}
       <Route component={NotFound} />
     </Switch>
   );

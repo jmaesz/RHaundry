@@ -1,39 +1,45 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import type { User } from "@shared/models/auth";
+import { STORAGE_KEYS } from "@/lib/mock-data";
 
 async function fetchUser(): Promise<User | null> {
-  const response = await fetch("/api/auth/user", {
-    credentials: "include",
-  });
-
-  if (response.status === 401) {
+  // Get user from localStorage (mock authentication)
+  const userJson = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+  if (!userJson) {
     return null;
   }
 
-  if (!response.ok) {
-    throw new Error(`${response.status}: ${response.statusText}`);
+  try {
+    const user = JSON.parse(userJson);
+    return user;
+  } catch (error) {
+    console.error("Failed to parse user from localStorage", error);
+    return null;
   }
-
-  return response.json();
 }
 
 async function logout(): Promise<void> {
-  window.location.href = "/api/logout";
+  // Clear user from localStorage
+  localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
 }
 
 export function useAuth() {
+  const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
+
   const { data: user, isLoading } = useQuery<User | null>({
-    queryKey: ["/api/auth/user"],
+    queryKey: ["current-user"],
     queryFn: fetchUser,
     retry: false,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: Infinity, // User data doesn't change unless we update it
   });
 
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      queryClient.setQueryData(["/api/auth/user"], null);
+      queryClient.setQueryData(["current-user"], null);
+      setLocation("/");
     },
   });
 

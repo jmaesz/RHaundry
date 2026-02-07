@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useCreateBooking } from "@/hooks/use-bookings";
 import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
+import { createMockBooking } from "@/lib/mock-data";
 import { Loader2 } from "lucide-react";
 import type { Machine } from "@shared/schema";
 
@@ -14,32 +15,57 @@ interface BookingModalProps {
   machine: Machine | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onBookingComplete?: () => void;
 }
 
-export function BookingModal({ machine, open, onOpenChange }: BookingModalProps) {
+export function BookingModal({ machine, open, onOpenChange, onBookingComplete }: BookingModalProps) {
   const { user } = useAuth();
-  const createBooking = useCreateBooking();
-  
+  const { toast } = useToast();
+
   const [duration, setDuration] = useState<"30" | "60">("60");
   const [notes, setNotes] = useState("");
   const [alertsEnabled, setAlertsEnabled] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  if (!machine) return null;
+  useEffect(() => {
+    console.log('BookingModal state changed:', {
+      open,
+      machine: machine?.machineNumber,
+      machineId: machine?.id
+    });
+  }, [open, machine]);
+
+  if (!machine) {
+    console.log('BookingModal: No machine provided');
+    return null;
+  }
 
   const handleBooking = async () => {
     try {
-      await createBooking.mutateAsync({
+      setIsLoading(true);
+      createMockBooking({
         machineId: machine.id,
         durationMinutes: parseInt(duration),
         notes: notes || null,
-        telegramHandle: null // Ideally fetch from profile
       });
+      
+      toast({
+        title: "Booking Confirmed!",
+        description: `You have booked machine ${machine.machineNumber} for ${duration} minutes.`,
+      });
+      
       onOpenChange(false);
+      onBookingComplete?.();
       setNotes("");
       setDuration("60");
     } catch (error) {
-      // Error handled by query/toast ideally
-      console.error(error);
+      toast({
+        title: "Booking Failed",
+        description: error instanceof Error ? error.message : "Please try again",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -124,10 +150,10 @@ export function BookingModal({ machine, open, onOpenChange }: BookingModalProps)
           </Button>
           <Button 
             onClick={handleBooking} 
-            disabled={createBooking.isPending}
+            disabled={isLoading}
             className="bg-primary hover:bg-primary/90 text-white min-w-[120px]"
           >
-            {createBooking.isPending ? (
+            {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               "Confirm"

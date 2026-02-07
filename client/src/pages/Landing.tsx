@@ -48,14 +48,28 @@ export default function Landing() {
         </div>
 
         <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <a href="/api/login">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-full shadow-[0_0_20px_rgba(0,100,0,0.4)] hover:shadow-[0_0_30px_rgba(0,100,0,0.6)] transition-all">
-              Login via Replit <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-          </a>
+          <Link href="/login">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-full shadow-[0_0_20px_rgba(0,100,0,0.4)] hover:shadow-[0_0_30px_rgba(0,100,0,0.6)] transition-all">
+                Login
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </motion.div>
+          </Link>
+
+          <Link href="/register">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button size="lg" variant="outline" className="border-primary/50 text-primary hover:bg-primary/10 px-8 py-6 text-lg rounded-full transition-all">
+                Register
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </motion.div>
+          </Link>
         </motion.div>
       </motion.div>
 

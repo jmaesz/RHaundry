@@ -20,6 +20,7 @@ export default function Profile() {
   const form = useForm<z.infer<typeof insertUserProfileSchema>>({
     resolver: zodResolver(insertUserProfileSchema),
     defaultValues: {
+      displayName: "",
       telegramHandle: "",
       phoneNumber: "",
       block: "",
@@ -29,6 +30,7 @@ export default function Profile() {
   useEffect(() => {
     if (profile) {
       form.reset({
+        displayName: profile.displayName || "",
         telegramHandle: profile.telegramHandle || "",
         phoneNumber: profile.phoneNumber || "",
         block: profile.block || "",
@@ -46,11 +48,11 @@ export default function Profile() {
     <div className="max-w-2xl mx-auto space-y-8 pb-20">
       <div className="flex flex-col items-center space-y-4">
         <Avatar className="w-24 h-24 border-2 border-primary shadow-[0_0_20px_rgba(0,100,0,0.3)]">
-          <AvatarImage src={user?.profileImageUrl || undefined} />
-          <AvatarFallback className="text-2xl bg-muted text-primary">{user?.firstName?.[0]}</AvatarFallback>
+          <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.displayName || user?.username}`} />
+          <AvatarFallback className="text-2xl bg-muted text-primary">{(user?.displayName || user?.username)?.[0]?.toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="text-center">
-          <h1 className="text-2xl font-bold font-mono text-white">{user?.firstName} {user?.lastName}</h1>
+          <h1 className="text-2xl font-bold font-mono text-white">{user?.displayName || user?.username}</h1>
           <p className="text-muted-foreground">{user?.email}</p>
         </div>
       </div>
@@ -62,6 +64,20 @@ export default function Profile() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="displayName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Display Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Your name" {...field} value={field.value || ""} className="bg-background/50" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="block"
