@@ -6,14 +6,19 @@ RHaundry is a gamified laundry tracker for Raffles Hall residents. Monitor machi
 
 # Features
 
+## Frontend Features
 - Live Machine Status – Real-time availability of washers and dryers across all blocks
 - Booking System – Reserve machines and track remaining time with live countdown timers
 - Leaderboard – Community punctuality rankings based on on-time laundry collection
-- Instant Alerts – Email notifications when your laundry is done
-- Messaging – In-app chat with other residents about laundry coordination
+- Messaging – In-app chat with other residents about laundry coordination (powered by OpenAI API)
 - Block Navigation – Browse and filter machines by block and level
 - User Profiles – Manage your display name, telegram handle, and contact info
 - Responsive Design – Optimized for desktop and mobile with Tailwind CSS
+
+## Backend Features
+- Email Alerts – Nodemailer-based email notifications when laundry is done (Gmail SMTP)
+- AI Chat Integration – OpenAI API for mock intelligent resident conversations
+- Real-time Updates – Express server with CORS support for cross-origin requests
 
 ---
 
@@ -21,29 +26,45 @@ RHaundry is a gamified laundry tracker for Raffles Hall residents. Monitor machi
 
 ```
 RHaundry/
-├── client/                 # Frontend React app (Vite)
+├── FRONTEND (client/)
 │   ├── src/
-│   │   ├── components/     # React components (UI, machines, bookings, etc.)
-│   │   ├── pages/          # Page routes (Home, Login, Profile, etc.)
-│   │   ├── hooks/          # Custom hooks (auth, bookings, leaderboard, etc.)
-│   │   ├── lib/            # Utilities & mock data
-│   │   ├── App.tsx         # Main app router
-│   │   └── main.tsx        # Entry point
-│   ├── public/             # Static assets
+│   │   ├── components/          # React components (machines, bookings, messaging, etc.)
+│   │   │   ├── MachineCard.tsx         # Machine display & booking UI
+│   │   │   ├── BookingModal.tsx        # Booking details modal
+│   │   │   ├── MessageModal.tsx        # AI chat interface (OpenAI)
+│   │   │   └── Navigation.tsx          # Demo send alert button
+│   │   │
+│   │   ├── pages/               # Page routes
+│   │   │   ├── Home.tsx                # Machine dashboard
+│   │   │   ├── Leaderboard.tsx         # Points ranking system
+│   │   │   ├── Messages.tsx            # AI chat page
+│   │   │   ├── Profile.tsx             # User profile
+│   │   │   └── Login.tsx & Register.tsx
+│   │   │
+│   │   ├── hooks/               # Custom React hooks (auth, bookings, leaderboard)
+│   │   ├── lib/                 # Utilities, mock data, OpenAI integration
+│   │   ├── App.tsx              # Main router
+│   │   └── main.tsx             # Entry point
+│   │
+│   ├── public/                  # Static assets
 │   └── package.json
 │
-├── server/                 # Backend Express app
+├── BACKEND (server/)
 │   ├── routes/
-│   │   └── email.ts        # Email alert API route
-│   └── index.ts            # Express server setup
+│   │   ├── email.ts             # Email notifications (Gmail Nodemailer)
+│   │   └── chat.ts              # AI messages (OpenAI API)
+│   │
+│   ├── index.ts                 # Express server, CORS, routing
+│   └── package.json
 │
-├── shared/                 # Shared types & schemas
-│   ├── schema.ts           # TypeScript interfaces
-│   └── routes.ts           # Route definitions
+├── shared/                      # Shared types & schemas
+│   ├── schema.ts                # TypeScript interfaces
+│   └── routes.ts                # Route definitions
 │
-├── .env                    # Environment variables (create this!)
-├── package.json            # Root dependencies
-└── README.md               # This file
+├── .env                         # Environment variables (create this!)
+├── .env.example                 # Template for environment variables
+├── package.json                 # Root dependencies
+└── README.md                    # This file
 ```
 
 ---
@@ -133,5 +154,32 @@ Email API runs on http://localhost:3001
 - Ensure email server is running on port 3001 (start with `npm run dev:email`)
 - Check firewall isn't blocking localhost traffic
 - Verify CORS is enabled in `server/index.ts`
+
+---
+
+# Tech Stack
+
+## Frontend
+- **React 18** – UI library
+- **TypeScript** – Type-safe JavaScript
+- **Vite** – Lightning-fast build tool
+- **Tailwind CSS** – Utility-first CSS
+- **shadcn/ui** – High-quality component library
+- **Wouter** – Client-side routing
+- **TanStack Query** – Server state management
+- **Framer Motion** – Animation library
+- **Lucide React** – Icon library
+
+## Backend
+- **Express.js** – Web framework
+- **TypeScript** – Type-safe server code
+- **Nodemailer** – Email delivery (Gmail SMTP)
+- **OpenAI API** – AI-powered chat integration
+- **CORS** – Cross-origin request handling
+- **dotenv** – Environment variable management
+
+## Data & Persistence
+- **localStorage** – Client-side mock data storage
+- **Mock data** – In-memory data for development/demo
 
 ---
