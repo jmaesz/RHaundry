@@ -149,7 +149,7 @@ export default function Register() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="john@raffles.edu.sg"
+                    placeholder="Demo: Enter jamesng242@gmail.com"
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     className="pl-10"

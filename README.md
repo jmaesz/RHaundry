@@ -14,6 +14,7 @@ RHaundry is a gamified laundry tracker for Raffles Hall residents. Monitor machi
 - Block Navigation – Browse and filter machines by block and level
 - User Profiles – Manage your display name, telegram handle, and contact info
 - Responsive Design – Optimized for desktop and mobile with Tailwind CSS
+ - hCaptcha – Human verification for critical forms (registration, login, messaging) to reduce spam and abuse. Configure site key and secret in the `.env` when enabled.
 
 ## Backend Features
 - Email Alerts – Nodemailer-based email notifications when laundry is done (Gmail SMTP)
@@ -96,6 +97,10 @@ RHaundry/
    GMAIL_USER=your-email@gmail.com
    GMAIL_APP_PASSWORD=your-16-character-app-password
    EMAIL_SERVER_PORT=3001
+
+   # Optional hCaptcha configuration (frontend human verification)
+   HCAPTCHA_SITE_KEY=your-hcaptcha-site-key
+   HCAPTCHA_SECRET=your-hcaptcha-secret
    ```
    
    **Important Notes:**
@@ -110,6 +115,8 @@ RHaundry/
    4. Copy and paste it into `GMAIL_APP_PASSWORD` — spaces are automatically stripped by the server
    
    **Reference:** See `.env.example` for a template of all available environment variables.
+
+**hCaptcha notes:** To enable hCaptcha protection for registration and messaging forms, add `HCAPTCHA_SITE_KEY` and `HCAPTCHA_SECRET` to your `.env`. These are optional—leave them out if you do not wish to enable hCaptcha in the demo.
 
 # Running the App
 

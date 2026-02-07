@@ -125,7 +125,7 @@ export default function Login() {
                   <Input
                     id="email"
                     type="text"
-                    placeholder="Enter your name or email"
+                    placeholder="Demo: Enter jamesng242@gmail.com "
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10"
