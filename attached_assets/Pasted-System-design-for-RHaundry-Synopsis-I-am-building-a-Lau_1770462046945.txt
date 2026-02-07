@@ -1,0 +1,46 @@
+System design for RHaundry
+Synopsis:
+I am building a Laundry Application for my Hall residents. This app allows users to track their
+laundry duration, and for other users to alert those who take very long to collect their clothes. It
+also has a reward system (+1 for on-time collection ; -1 for late collection). Usage of telegram API
+for alert feature, usage of Open AI tokenisation for mock chat with late collection users.
+UX:
+user register/login , captcha for giggles
+user input their name, @tele , email and phone number (optional)
+select what block, then to which machine (dryer/washing), then which number they using.
+users can only pick the washing machine they using
+click “Available”, then it will bring user to a pop up
+Pop up will ask how long they will be using 30min / 1 hour, and a tick box that says
+something like “upon ticking this information, you will be notified by other people…” , and
+also a notes where user can say something like “Claiming my clothes 10minutes later.
+paiseh!” and then another confirmation button
+Pop up page to say that you have successfully booked the machine
+on the website, the option will say “unavailable” once the user is using the machine. and it
+will also say the time until its free for the next person to use
+Leaderboard feature
+most on time leaderboard
+every time take on time, after alert is send, if users pick up their clothes within 5minutes,
+they get 1 point, if they dont get their clothes 30minutes after the alert, they get deducted
+1 point
+mock UI: Koon Wei at the top with 67points, Zi Goong at 2nd place with -10 points
+2nd place will be current user with +1 point (just update it regardless of the alert)
+Times-up Feature:
+Alert user once the time is up
+“The MacRHine has CompleRHted its JoRHb!”
+Via @Telegram and phone notification
+Alert Feature:
+The user is unavailable or did not pick up the clothes
+Another user can prompt the user via an in-app chat
+Powered by chat-gpt spoken with singapore singlish
+1.
+2.
+3.
+4.
+Additional UI:
+Have a mock display of used machine, perhaps like the person who book is Koon Wei ,
+email: koonwei6767@gmail.com and telegram @jmaesz
+After that, I can also click the message user button and message Koon Wei in the in-app
+chat , Koon Wei will respond powered by chatgpt spoken with singapore singlish
+also a profile page where users can see their profile, username, email, tele@, phone
+number, change details (mock button
+“Raffles Hall” inspire UI, dark green and black
